@@ -21,7 +21,3 @@ top. After finishing you can restart, return to the menu or quit.
 - **`wordlist.rs`** – generates the words to type (can be extended for custom lists)
 - **`stats.rs`** – utilities for computing typing statistics
 - **`theme.rs`** – defines color themes
-
-The code is intentionally small to keep it easy to extend.
-
-For best results use a monospaced font such as [Fira Code](https://github.com/tonsky/FiraCode) in your terminal.
