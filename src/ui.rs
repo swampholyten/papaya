@@ -1,7 +1,8 @@
 use ratatui::prelude::*;
-use ratatui::widgets::{Block, Borders, BorderType, List, ListItem, ListState, Paragraph, Wrap, Table, Row, Cell, Clear};
+use ratatui::widgets::{Block, Borders, BorderType, List, ListItem, ListState, Paragraph, Wrap, Table, Row, Cell, Clear, Tabs, Padding};
 
 use crate::{App, AppMode, Theme};
+use random_word::Lang;
 
 pub fn draw(f: &mut Frame, app: &App, theme: &Theme) {
     match app.mode {
@@ -42,6 +43,45 @@ fn build_text(app: &App, theme: &Theme) -> Text<'static> {
 }
 
 fn draw_menu(f: &mut Frame, app: &App, theme: &Theme) {
+    let area = centered_rect(40, 50, f.size());
+    let chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .margin(1)
+        .constraints([Constraint::Length(3), Constraint::Min(3)])
+        .split(area);
+
+    let titles: Vec<Line> = app
+        .languages
+        .iter()
+        .map(|l| match l {
+            Lang::En => Line::from("English"),
+            Lang::Es => Line::from("Spanish"),
+            Lang::De => Line::from("German"),
+        })
+        .collect();
+    let tabs = Tabs::new(titles)
+        .select(app.lang_selected)
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .border_type(BorderType::Double)
+                .style(Style::default().bg(theme.background).fg(theme.text))
+                .title(Span::styled(
+                    "Language",
+                    Style::default()
+                        .fg(theme.accent)
+                        .add_modifier(Modifier::BOLD),
+                )),
+        )
+        .highlight_style(
+            Style::default()
+                .fg(theme.background)
+                .bg(theme.menu_highlight)
+                .add_modifier(Modifier::BOLD),
+        );
+    f.render_widget(Clear, area);
+    f.render_widget(tabs, chunks[0]);
+
     let items: Vec<ListItem> = app
         .durations
         .iter()
@@ -69,9 +109,7 @@ fn draw_menu(f: &mut Frame, app: &App, theme: &Theme) {
         .highlight_symbol(" > ");
     let mut state = ListState::default();
     state.select(Some(app.selected));
-    let area = centered_rect(30, 40, f.size());
-    f.render_widget(Clear, area);
-    f.render_stateful_widget(list, area, &mut state);
+    f.render_stateful_widget(list, chunks[1], &mut state);
 }
 
 fn draw_typing(f: &mut Frame, app: &App, theme: &Theme) {
@@ -107,6 +145,7 @@ fn draw_typing(f: &mut Frame, app: &App, theme: &Theme) {
                 .add_modifier(Modifier::BOLD),
         ));
     let paragraph = Paragraph::new(text)
+        .style(Style::default().add_modifier(Modifier::BOLD))
         .block(block)
         .wrap(Wrap { trim: false });
     f.render_widget(paragraph, chunks[1]);
@@ -157,9 +196,11 @@ fn draw_summary(f: &mut Frame, app: &App, theme: &Theme) {
                     Style::default()
                         .fg(theme.accent)
                         .add_modifier(Modifier::BOLD),
-                )),
+                ))
+                .padding(Padding::new(2, 2, 1, 1)),
         )
-        .column_spacing(2);
+        .column_spacing(4)
+        .style(Style::default().add_modifier(Modifier::BOLD));
     f.render_widget(Clear, area);
     f.render_widget(table, chunks[0]);
 

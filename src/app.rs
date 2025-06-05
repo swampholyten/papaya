@@ -3,6 +3,7 @@ use crossterm::event::KeyEvent;
 
 use crate::stats::Stats;
 use crate::wordlist;
+use random_word::Lang;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum AppMode {
@@ -19,6 +20,8 @@ pub struct App {
     pub duration: Duration,
     pub durations: Vec<u64>,
     pub selected: usize,
+    pub languages: Vec<Lang>,
+    pub lang_selected: usize,
     pub should_quit: bool,
     pub stats: Stats,
     pub test_finished: bool,
@@ -34,6 +37,8 @@ impl App {
             duration: Duration::from_secs(60),
             durations: vec![30, 60, 120],
             selected: 1,
+            languages: vec![Lang::En, Lang::Es, Lang::De],
+            lang_selected: 0,
             should_quit: false,
             stats: Stats::default(),
             test_finished: false,
@@ -59,6 +64,16 @@ impl App {
             KeyCode::Down | KeyCode::Char('j') => {
                 if self.selected + 1 < self.durations.len() {
                     self.selected += 1;
+                }
+            }
+            KeyCode::Left | KeyCode::Char('h') => {
+                if self.lang_selected > 0 {
+                    self.lang_selected -= 1;
+                }
+            }
+            KeyCode::Right | KeyCode::Char('l') => {
+                if self.lang_selected + 1 < self.languages.len() {
+                    self.lang_selected += 1;
                 }
             }
             KeyCode::Enter => {
@@ -105,7 +120,8 @@ impl App {
     }
 
     fn start_test(&mut self) {
-        let words = wordlist::random_words(50);
+        let lang = self.languages[self.lang_selected];
+        let words = wordlist::random_words(50, lang);
         self.target = words.join(" ");
         self.typed.clear();
         self.started = None;
