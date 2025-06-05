@@ -20,7 +20,7 @@ impl Default for Theme {
             background: Color::Rgb(26, 27, 38),      // Tokyonight bg
             text: Color::Rgb(192, 202, 245),         // Tokyonight fg
             accent: Color::Rgb(122, 162, 247),       // Blue
-            correct: Color::Rgb(158, 206, 106),      // Green
+            correct: Color::Rgb(122, 162, 247),      // Blue for correct words
             incorrect: Color::Rgb(247, 118, 142),    // Red
             pending: Color::Rgb(86, 95, 137),        // Grey
             current: Color::Rgb(122, 162, 247),      // Blue for cursor
