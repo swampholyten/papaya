@@ -11,7 +11,7 @@ mod theme;
 mod ui;
 mod wordlist;
 
-use app::App;
+use app::{App, AppMode};
 use theme::Theme;
 
 fn main() -> io::Result<()> {
@@ -35,17 +35,20 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> io::Re
     let theme = Theme::default();
     loop {
         app.update_stats();
+        if let AppMode::Typing = app.mode {
+            if app.finished() {
+                app.mode = AppMode::Summary;
+            }
+        }
+
         terminal.draw(|f| ui::draw(f, &app, &theme))?;
 
-        if app.finished() {
+        if app.should_quit {
             break;
         }
 
         if event::poll(Duration::from_millis(50))? {
             if let event::Event::Key(key) = event::read()? {
-                if key.code == event::KeyCode::Esc {
-                    break;
-                }
                 app.on_key(key);
             }
         }

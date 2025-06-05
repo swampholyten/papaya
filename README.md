@@ -8,7 +8,10 @@ Papaya is a minimal yet extensible typing application for the terminal inspired 
 cargo run --release
 ```
 
-Press <kbd>Esc</kbd> to quit. Typing progress and WPM are displayed at the top of the interface.
+When launched you will be asked to choose a test length such as `30s` or `60s`.
+During the test a blinking underline indicates the current character and the
+remaining time and live WPM are shown at the top. After finishing you can
+restart, return to the menu or quit.
 
 ## Architecture
 
