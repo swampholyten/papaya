@@ -1,0 +1,27 @@
+# Papaya
+
+Papaya is a minimal yet extensible typing application for the terminal inspired by [MonkeyType](https://monkeytype.com/). It is built with the [`ratatui`](https://crates.io/crates/ratatui) TUI library and serves as a starting point for adding features like WPM tracking, persistent user statistics, custom themes, and word lists.
+
+## Usage
+
+```bash
+cargo run --release
+```
+
+When launched you can select a test length from the menu (30s, 60s or 120s) using
+the arrow keys or `j`/`k`. Press Enter to start. During the test an underlined
+cursor highlights the current character while correct, incorrect and pending
+text are colored green, red and gray. Time remaining and live WPM appear at the
+top. After finishing you can restart, return to the menu or quit.
+
+## Architecture
+
+- **`app.rs`** – application state and input handling
+- **`ui.rs`** – rendering logic based on `ratatui`
+- **`wordlist.rs`** – generates the words to type (can be extended for custom lists)
+- **`stats.rs`** – utilities for computing typing statistics
+- **`theme.rs`** – defines color themes
+
+The code is intentionally small to keep it easy to extend.
+
+For best results use a monospaced font such as [Fira Code](https://github.com/tonsky/FiraCode) in your terminal.
