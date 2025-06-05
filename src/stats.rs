@@ -30,4 +30,12 @@ impl Stats {
         }
         mistakes
     }
+
+    pub fn accuracy(&self) -> f64 {
+        if self.chars == 0 {
+            100.0
+        } else {
+            100.0 * (self.chars.saturating_sub(self.mistakes) as f64) / self.chars as f64
+        }
+    }
 }

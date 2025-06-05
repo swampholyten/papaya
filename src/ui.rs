@@ -1,5 +1,5 @@
 use ratatui::prelude::*;
-use ratatui::widgets::{Block, Borders, List, ListItem, ListState, Paragraph, Wrap};
+use ratatui::widgets::{Block, Borders, List, ListItem, ListState, Paragraph, Wrap, Table, Row, Cell};
 
 use crate::{App, AppMode, Theme};
 
@@ -69,7 +69,7 @@ fn draw_typing(f: &mut Frame, app: &App, theme: &Theme) {
         ])
         .split(size);
 
-    let stats = Paragraph::new(format!("WPM: {:.2}  Time: {}s", app.stats.wpm, app.time_left().as_secs()))
+    let stats = Paragraph::new(format!("WPM: {}  Time: {}s", app.stats.wpm.round() as u64, app.time_left().as_secs()))
         .block(Block::default());
     f.render_widget(stats, chunks[0]);
 
@@ -82,14 +82,37 @@ fn draw_typing(f: &mut Frame, app: &App, theme: &Theme) {
 }
 
 fn draw_summary(f: &mut Frame, app: &App) {
-    let block = Block::default().borders(Borders::ALL).title("Results");
-    let text = vec![
-        Line::from(format!("Time: {}s", app.stats.elapsed.as_secs())),
-        Line::from(format!("WPM: {:.2}", app.stats.wpm)),
-        Line::from(format!("Mistakes: {}", app.stats.mistakes)),
-        Line::from(""),
-        Line::from("Press r to restart, m for menu, q to quit"),
+    let area = f.size();
+    let chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .margin(1)
+        .constraints([Constraint::Min(3), Constraint::Length(2)])
+        .split(area);
+
+    let rows = vec![
+        Row::new(vec![
+            Cell::from("Time Taken"),
+            Cell::from(format!("{}s", app.stats.elapsed.as_secs())),
+        ]).style(Style::default().bg(Color::DarkGray)),
+        Row::new(vec![Cell::from("WPM"), Cell::from(format!("{}", app.stats.wpm.round() as u64))]),
+        Row::new(vec![
+            Cell::from("Accuracy"),
+            Cell::from(format!("{:.0}%", app.stats.accuracy())),
+        ]).style(Style::default().bg(Color::DarkGray)),
+        Row::new(vec![
+            Cell::from("Mistyped"),
+            Cell::from(format!("{} words", app.stats.mistakes)),
+        ]),
     ];
-    let paragraph = Paragraph::new(text).block(block);
-    f.render_widget(paragraph, f.size());
+
+    let table = Table::new(rows, [Constraint::Percentage(50), Constraint::Percentage(50)])
+        .header(Row::new(vec!["Metric", "Value"]).style(Style::default().add_modifier(Modifier::BOLD)))
+        .block(Block::default().borders(Borders::ALL).title("Results"))
+        .column_spacing(2);
+
+    f.render_widget(table, chunks[0]);
+
+    let help = Paragraph::new("Press r to restart, m for menu, q to quit")
+        .block(Block::default());
+    f.render_widget(help, chunks[1]);
 }

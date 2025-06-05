@@ -12,7 +12,8 @@ When launched you can select a test length from the menu (30s, 60s or 120s) usin
 the arrow keys or `j`/`k`. Press Enter to start. During the test an underlined
 cursor highlights the current character while correct, incorrect and pending
 text are colored green, red and gray. Time remaining and live WPM appear at the
-top. After finishing you can restart, return to the menu or quit.
+top. After finishing a results table shows your time, WPM, accuracy and mistake
+count. You can then restart, return to the menu or quit.
 
 ## Architecture
 

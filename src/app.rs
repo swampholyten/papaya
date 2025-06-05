@@ -21,6 +21,7 @@ pub struct App {
     pub selected: usize,
     pub should_quit: bool,
     pub stats: Stats,
+    pub test_finished: bool,
 }
 
 impl App {
@@ -35,6 +36,7 @@ impl App {
             selected: 1,
             should_quit: false,
             stats: Stats::default(),
+            test_finished: false,
         }
     }
 
@@ -108,6 +110,7 @@ impl App {
         self.typed.clear();
         self.started = None;
         self.stats = Stats::default();
+        self.test_finished = false;
         self.mode = AppMode::Typing;
     }
 
@@ -115,6 +118,7 @@ impl App {
         self.mode = AppMode::Menu;
         self.started = None;
         self.typed.clear();
+        self.test_finished = false;
     }
 
     pub fn finished(&self) -> bool {

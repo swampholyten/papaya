@@ -34,10 +34,14 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> io::Re
     let mut app = App::new();
     let theme = Theme::default();
     loop {
-        app.update_stats();
         if let AppMode::Typing = app.mode {
-            if app.finished() {
-                app.mode = AppMode::Summary;
+            if !app.test_finished {
+                app.update_stats();
+                if app.finished() {
+                    app.update_stats();
+                    app.test_finished = true;
+                    app.mode = AppMode::Summary;
+                }
             }
         }
 
