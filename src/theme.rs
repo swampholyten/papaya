@@ -17,16 +17,16 @@ pub struct Theme {
 impl Default for Theme {
     fn default() -> Self {
         Self {
-            background: Color::Rgb(30, 30, 46),      // Catppuccin base
-            text: Color::Rgb(205, 214, 244),         // Catppuccin text
-            accent: Color::Rgb(137, 180, 250),       // Blue
-            correct: Color::Rgb(166, 227, 161),
-            incorrect: Color::Rgb(243, 139, 168),
-            pending: Color::Rgb(108, 112, 134),
-            current: Color::Rgb(249, 226, 175),
-            table_bg: Color::Rgb(49, 50, 68),
-            table_border: Color::Rgb(108, 112, 134),
-            menu_highlight: Color::Rgb(137, 180, 250),
+            background: Color::Rgb(26, 27, 38),      // Tokyonight bg
+            text: Color::Rgb(192, 202, 245),         // Tokyonight fg
+            accent: Color::Rgb(122, 162, 247),       // Blue
+            correct: Color::Rgb(158, 206, 106),      // Green
+            incorrect: Color::Rgb(247, 118, 142),    // Red
+            pending: Color::Rgb(86, 95, 137),        // Grey
+            current: Color::Rgb(122, 162, 247),      // Blue for cursor
+            table_bg: Color::Rgb(31, 35, 53),
+            table_border: Color::Rgb(65, 72, 104),
+            menu_highlight: Color::Rgb(122, 162, 247),
         }
     }
 }

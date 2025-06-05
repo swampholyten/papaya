@@ -6,4 +6,4 @@ edition = "2021"
 [dependencies]
 ratatui = "0.25"
 crossterm = "0.27"
-rand = "0.8"
+random_word = { version = "0.5", features = ["en", "es", "de"] }
