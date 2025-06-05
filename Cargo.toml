@@ -1,6 +1,9 @@
 [package]
 name = "papaya"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
 
 [dependencies]
+ratatui = "0.25"
+crossterm = "0.27"
+rand = "0.8"
