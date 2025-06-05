@@ -17,9 +17,11 @@ pub struct App {
     pub typed: String,
     pub started: Option<Instant>,
     pub duration: Duration,
-    pub input: String,
+    pub durations: Vec<u64>,
+    pub selected: usize,
     pub should_quit: bool,
     pub stats: Stats,
+    pub test_finished: bool,
 }
 
 impl App {
@@ -30,9 +32,11 @@ impl App {
             typed: String::new(),
             started: None,
             duration: Duration::from_secs(60),
-            input: String::new(),
+            durations: vec![30, 60, 120],
+            selected: 1,
             should_quit: false,
             stats: Stats::default(),
+            test_finished: false,
         }
     }
 
@@ -47,18 +51,18 @@ impl App {
     fn on_key_menu(&mut self, event: KeyEvent) {
         use crossterm::event::KeyCode;
         match event.code {
-            KeyCode::Char(c) if c.is_ascii_digit() => self.input.push(c),
-            KeyCode::Char('s') | KeyCode::Char('S') => {}
-            KeyCode::Backspace => {
-                self.input.pop();
+            KeyCode::Up | KeyCode::Char('k') => {
+                if self.selected > 0 {
+                    self.selected -= 1;
+                }
+            }
+            KeyCode::Down | KeyCode::Char('j') => {
+                if self.selected + 1 < self.durations.len() {
+                    self.selected += 1;
+                }
             }
             KeyCode::Enter => {
-                let secs: u64 = self
-                    .input
-                    .trim_end_matches('s')
-                    .parse()
-                    .unwrap_or(60);
-                self.duration = Duration::from_secs(secs.max(1));
+                self.duration = Duration::from_secs(self.durations[self.selected]);
                 self.start_test();
             }
             KeyCode::Esc | KeyCode::Char('q') => {
@@ -104,17 +108,17 @@ impl App {
         let words = wordlist::random_words(50);
         self.target = words.join(" ");
         self.typed.clear();
-        self.input.clear();
         self.started = None;
         self.stats = Stats::default();
+        self.test_finished = false;
         self.mode = AppMode::Typing;
     }
 
     fn reset_menu(&mut self) {
         self.mode = AppMode::Menu;
-        self.input.clear();
         self.started = None;
         self.typed.clear();
+        self.test_finished = false;
     }
 
     pub fn finished(&self) -> bool {
