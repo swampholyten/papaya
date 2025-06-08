@@ -12,28 +12,57 @@ pub fn draw(f: &mut Frame, app: &App, theme: &Theme) {
 }
 
 fn build_text(app: &App, theme: &Theme) -> Text<'static> {
+    let target_words: Vec<&str> = app.target.split_whitespace().collect();
+    let mut typed_words: Vec<&str> = app.typed.split_whitespace().collect();
+    let typed_ends_with_space = app.typed.ends_with(' ');
+
+    let current_fragment = if typed_ends_with_space {
+        ""
+    } else {
+        typed_words.pop().unwrap_or("")
+    };
+
     let mut spans = Vec::new();
-    for (i, ch) in app.target.chars().enumerate() {
-        let mut style = if let Some(c) = app.typed.chars().nth(i) {
-            if c == ch {
+    for (i, word) in target_words.iter().enumerate() {
+        if i > 0 {
+            spans.push(Span::styled(" ", Style::default().fg(theme.pending)));
+        }
+
+        if i < typed_words.len() {
+            let style = if typed_words[i] == *word {
                 Style::default().fg(theme.correct)
             } else {
                 Style::default().fg(theme.incorrect)
+            };
+            spans.push(Span::styled(word.to_string(), style));
+        } else if i == typed_words.len() && !typed_ends_with_space {
+            for (j, ch) in word.chars().enumerate() {
+                let mut style = if let Some(tc) = current_fragment.chars().nth(j) {
+                    if tc == ch {
+                        Style::default().fg(theme.correct)
+                    } else {
+                        Style::default().fg(theme.incorrect)
+                    }
+                } else {
+                    Style::default().fg(theme.pending)
+                };
+                if j == current_fragment.len() {
+                    style = style.add_modifier(Modifier::UNDERLINED | Modifier::BOLD);
+                }
+                spans.push(Span::styled(ch.to_string(), style));
             }
         } else {
-            Style::default().fg(theme.pending)
-        };
-        if i == app.typed.len() {
-            style = style.add_modifier(Modifier::UNDERLINED | Modifier::BOLD);
+            spans.push(Span::styled((*word).to_string(), Style::default().fg(theme.pending)));
         }
-        spans.push(Span::styled(ch.to_string(), style));
     }
-    if app.typed.len() >= app.target.len() {
+
+    if typed_words.len() >= target_words.len() && typed_ends_with_space {
         let style = Style::default()
             .fg(theme.pending)
             .add_modifier(Modifier::UNDERLINED | Modifier::BOLD);
         spans.push(Span::styled(" ", style));
     }
+
     Text::from(Line::from(spans))
 }
 
